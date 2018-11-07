@@ -1,3 +1,4 @@
+translating by Flowsnow
 Lab 2: Memory Management
 ======
 ### Lab 2: Memory Management
@@ -48,7 +49,6 @@ Lab 2 contains the following new source files, which you should browse through:
   * `kern/pmap.h`
   * `kern/kclock.h`
   * `kern/kclock.c`
-
 
 
 `memlayout.h` describes the layout of the virtual address space that you must implement by modifying `pmap.c`. `memlayout.h` and `pmap.h` define the `PageInfo` structure that you'll use to keep track of which pages of physical memory are free. `kclock.c` and `kclock.h` manipulate the PC's battery-backed clock and CMOS RAM hardware, in which the BIOS records the amount of physical memory the PC contains, among other things. The code in `pmap.c` needs to read this device hardware in order to figure out how much physical memory there is, but that part of the code is done for you: you do not need to know the details of how the CMOS hardware works.
@@ -201,22 +201,21 @@ Your code should now pass the `check_kern_pgdir()` and `check_page_installed_pgd
 
 Question
 
-  2. What entries (rows) in the page directory have been filled in at this point? What addresses do they map and where do they point? In other words, fill out this table as much as possible: 
-  | Entry | Base Virtual Address | Points to (logically):                |
-  |-------|----------------------|---------------------------------------|
-  |  1023 | ?                    | Page table for top 4MB of phys memory |
-  |  1022 | ?                    | ?                                     |
-  |     . | ?                    | ?                                     |
-  |     . | ?                    | ?                                     |
-  |     . | ?                    | ?                                     |
-  |     2 | 0x00800000           | ?                                     |
-  |     1 | 0x00400000           | ?                                     |
-  |     0 | 0x00000000           | [see next question]                   |
-  3. We have placed the kernel and user environment in the same address space. Why will user programs not be able to read or write the kernel's memory? What specific mechanisms protect the kernel memory?
-  4. What is the maximum amount of physical memory that this operating system can support? Why?
-  5. How much space overhead is there for managing memory, if we actually had the maximum amount of physical memory? How is this overhead broken down?
-  6. Revisit the page table setup in `kern/entry.S` and `kern/entrypgdir.c`. Immediately after we turn on paging, EIP is still a low number (a little over 1MB). At what point do we transition to running at an EIP above KERNBASE? What makes it possible for us to continue executing at a low EIP between when we enable paging and when we begin running at an EIP above KERNBASE? Why is this transition necessary?
-
+  1. What entries (rows) in the page directory have been filled in at this point? What addresses do they map and where do they point? In other words, fill out this table as much as possible: 
+     | Entry | Base Virtual Address | Points to (logically):                |
+     | ----- | -------------------- | ------------------------------------- |
+     | 1023  | ?                    | Page table for top 4MB of phys memory |
+     | 1022  | ?                    | ?                                     |
+     | .     | ?                    | ?                                     |
+     | .     | ?                    | ?                                     |
+     | .     | ?                    | ?                                     |
+     | 2     | 0x00800000           | ?                                     |
+     | 1     | 0x00400000           | ?                                     |
+     | 0     | 0x00000000           | [see next question]                   |
+  2. We have placed the kernel and user environment in the same address space. Why will user programs not be able to read or write the kernel's memory? What specific mechanisms protect the kernel memory?
+  3. What is the maximum amount of physical memory that this operating system can support? Why?
+  4. How much space overhead is there for managing memory, if we actually had the maximum amount of physical memory? How is this overhead broken down?
+  5. Revisit the page table setup in `kern/entry.S` and `kern/entrypgdir.c`. Immediately after we turn on paging, EIP is still a low number (a little over 1MB). At what point do we transition to running at an EIP above KERNBASE? What makes it possible for us to continue executing at a low EIP between when we enable paging and when we begin running at an EIP above KERNBASE? Why is this transition necessary?
 
 ```
 Challenge! We consumed many physical pages to hold the page tables for the KERNBASE mapping. Do a more space-efficient job using the PTE_PS ("Page Size") bit in the page directory entries. This bit was _not_ supported in the original 80386, but is supported on more recent x86 processors. You will therefore have to refer to [Volume 3 of the current Intel manuals][3]. Make sure you design the kernel to use this optimization only on processors that support it!
